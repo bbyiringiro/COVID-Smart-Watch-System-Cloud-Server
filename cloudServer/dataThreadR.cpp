@@ -1,5 +1,6 @@
 #include "dataThreadR.h"
 
+
 dataThreadR::dataThreadR(int ID, /*int sizeToClient, int* size,*/ QObject *parent) :
     QThread(parent)
 {
@@ -83,26 +84,10 @@ void dataThreadR::Read()
         else { //not registered, so have to register here
             qDebug() << count;
             int newID;
-            if (nothing) {
+            if (nothing)
                 newID = count;
-                file.open(QIODevice::WriteOnly | QIODevice::Text);
-                stream << newID << "," << protocolCheck[0] << ", ," << "Sensor" << newID << "\n";
-                file.close();
-                QString sendID = QString::number(newID);
-                socket->write(sendID.toUtf8()+"\r");
-                socket->waitForBytesWritten(3000);
-
-            }
-
-            else {
+            else
                 newID = count+1;
-                file.open(QIODevice::WriteOnly | QIODevice::Append);
-                stream << newID << "," << protocolCheck[0] << ", ," << "Sensor" << newID << "\n";
-                file.close();
-                QString sendID = QString::number(newID);
-                socket->write(sendID.toUtf8()+"\r");
-                socket->waitForBytesWritten(3000);
-            }
 
             QString conname = "connection ";
             conname += QString::number(int(this->socketDescriptor));
@@ -120,23 +105,82 @@ void dataThreadR::Read()
             QString time = (QDateTime::currentDateTime().toString("HH"));
             time += ":"; time += (QDateTime::currentDateTime().toString("mm"));
             time += ":"; time += (QDateTime::currentDateTime().toString("ss"));
-            QString qryString = "INSERT INTO sensors (id, power, power_updated_at) values ('";
+
+            QString qryString = "INSERT INTO sensors (id, mac_address, codename,number, sensors.condition, power, created_at) values ('";
             qryString += QString::number(newID);      qryString += "','";
-            qryString += QString::number(0);      qryString += "','";
+            qryString += protocolCheck[0];      qryString += "','";
+            qryString += "Sensor "+QString::number(newID);       qryString += "','"; //codename
+            qryString += QString::number(newID);      qryString += "','"; // number
+            qryString += QString::number(2);      qryString += "','"; // condition
+            qryString += QString::number(0);      qryString += "','"; //power
             qryString += year;      qryString += "-";
             qryString += month;     qryString += "-";
             qryString += date;      qryString += " ";
             qryString += time;      qryString += "')";
 
-            QSqlQuery qry(db);
-            qry.prepare(qryString);
-            if (!qry.exec())
+            if (!(db.open())) {
+                qDebug() << "cannot open";
+            }
 
+
+
+
+
+            QSqlQuery qry(db);
+            if (!qry.exec(qryString)){
                 qDebug() << "cannot insert new sensor";
 
-            else
-                qDebug() << "new sensor Inserted! it's id" << newID;
+//                qDebug() << qry.lastError().databaseText() << " \n" <<qry.lastError().driverText() ;
+            }
+
+
+            else{
+                qDebug() << "New sensor Inserted! it's id" << newID;
+                if (nothing) {
+
+                    file.open(QIODevice::WriteOnly | QIODevice::Text);
+                    stream << newID << "," << protocolCheck[0] << ", ," << "Sensor" << newID << "\n";
+                    file.close();
+                    QString sendID = QString::number(newID);
+                    socket->write(sendID.toUtf8()+"\r");
+                    socket->waitForBytesWritten(3000);
+
+                }
+
+                else {
+                    file.open(QIODevice::WriteOnly | QIODevice::Append);
+                    stream << newID << "," << protocolCheck[0] << ", ," << "Sensor" << newID << "\n";
+                    file.close();
+                    QString sendID = QString::number(newID);
+                    socket->write(sendID.toUtf8()+"\r");
+                    socket->waitForBytesWritten(3000);
+                }
+
+            }
+//            QSqlQuery query2 = QSqlQuery(db);
+
+
+//            query2.exec("DELETE FROM sensors WHERE id = 18");
+//            query2.exec("SELECT * FROM sensors");
+//                // The above two sentences are equivalent to the one commented below
+//                // QSqlQuery query2("SELECT * FROM db2.table_component_info",database_1);
+
+//            QSqlRecord rec = query2.record();
+
+//            qDebug() << "Number of columns in the table:" << rec;         // How many columns are there in the table
+//            qDebug() << "Number of rows in the table:" << query2.size();       // How many rows are there in the table
+
+//            int col1 = rec.indexOf("id");       // Get the subscript of the attribute "component_type" in the table (counting from the 0th column, which column)
+//            int col2 = rec.indexOf("created_at");
+//            while (query2.next())
+//            {
+//                qDebug() << query2.value(col1).toString() << " " << query2.value(col2).toString();  // Output all values ​​under the column name "component_type"
+//            }
+
+            db.close();
+
         }
+
 
     }
 
@@ -209,7 +253,7 @@ void dataThreadR::Read()
 
     else{ //correct protocol
 
-        if (protocolCheck[0].toInt() > 0 && protocolCheck[0].toInt() < 51){ //check if the connected assets provide valid ID, never use "0" as an ID
+        if (protocolCheck[0].toInt() > 0 && protocolCheck[0].toInt() < 102){ //check if the connected assets provide valid ID, never use "0" as an ID
             i = protocolCheck[0].toInt(); //i is the ID of the list, eg. ID 100
 
             if (firstDB) {

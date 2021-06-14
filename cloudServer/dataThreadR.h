@@ -13,6 +13,8 @@
 #include <QSqlDatabase>
 #include <QSql>
 #include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlError>
 
 class dataThreadR : public QThread
 {
