@@ -1,14 +1,14 @@
-#COVID System Cloud Server in C++
+# COVID System Cloud Server in C++
 This repository contains a multi-threaded C++ cloud server program for a COVID system. The program is responsible for receiving data from sensors (ESP8266 or ESP32) connected through WiFi and the Internet. The received data is stored and sent to a web portal for control room usage. At the moment, no bi-directional command channel is implemented.
 
-##Features
+## Features
 Multi-threaded implementation for efficient data handling
 Supports ESP8266 and ESP32 sensors connected through WiFi
 Stores received data and sends it to a web portal
 Uses QTcpServer and QTcpSocket for server and socket handling
 Utilizes QSqlDatabase for database operations
 
-##Dependencies
+## Dependencies
 Qt 5.x.x (Core, Network, SQL modules)
 A compatible C++ compiler (e.g., GCC, MSVC)
 Building and Running the Project
@@ -42,7 +42,7 @@ Copy code
 ```
 ./covid-system-cloud-server
 ```
-##Structure
+## Structure
 
 The project contains the following key files:
 
