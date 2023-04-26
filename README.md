@@ -46,10 +46,10 @@ Copy code
 
 The project contains the following key files:
 
-main.cpp: The entry point of the application, responsible for initializing the server and starting the event loop.
-dataServerR.h: Header file for the dataServerR class, which inherits from QTcpServer and handles incoming connections.
-dataServerR.cpp: Implementation file for the dataServerR class.
-dataThreadR.h: Header file for the dataThreadR class, which inherits from QThread and is responsible for reading data from the client and handling database operations.
-dataThreadR.cpp: Implementation file for the dataThreadR class.
-Contributing
+* main.cpp: The entry point of the application, responsible for initializing the server and starting the event loop.
+* dataServerR.h: Header file for the dataServerR class, which inherits from QTcpServer and handles incoming connections.
+* dataServerR.cpp: Implementation file for the dataServerR class.
+* dataThreadR.h: Header file for the dataThreadR class, which inherits from QThread and is responsible for reading data from the client and handling database operations.
+* dataThreadR.cpp: Implementation file for the dataThreadR class.
+## Contributing
 Please submit issues and pull requests on the GitHub repository. Your contributions are greatly appreciated!
