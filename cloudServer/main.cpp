@@ -1,6 +1,6 @@
 /*
  * This program is going to be the cloud server program running on a cloud server
- * For COVID system, it directly coonects sensors (ESP8266 or ESP32) through wifi->internet->this server program
+ * For COVID system, it directly connect sensors (ESP8266 or ESP32) through wifi->internet->this server program
  * The received data will be stored and sent to the web portal for the uae of the control room
  * No bi-directional command channel is needed at the moment
 */
